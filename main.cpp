@@ -1,208 +1,433 @@
-#include <stdio.h>  // importo stdio.h
-#include <iostream> // importo <iostream> per utilizzare "system("CLS")"
-#include <math.h>   // importo <math.h> per utilizzare la funzione "sqrt()"
+#include <stdio.h>   // importo <stdio.h>
+#include <iostream>  // importo <iostream> per utilizzare "system("CLS")"
+#include <math.h>    // importo <math.h> per usare le funzioni matematiche
+#include <time.h>    // libreria time.h
 
-// provo a usare le funzioni per fare le operazioni
-// https://www.w3schools.com/cpp/cpp_function_return.asp
+using namespace std; // per non dover fare std::cout/std::endl/std::cin ogni volta
 
-int somma(int a,int b) {        // creo una funzione di nome "somma" con parametri a di tipo int e b di tipo int il ritorno di tipo int
-    return a + b;               // ritorno il valore di "a + b"
-}
+#define RESET "\e[0m"   // costante di nome reset che ha valore in codice escape ansi di colore grigio/reset
 
-int sottr(int a, int b) {       // creo una funzione di nome "sottr" con parametri a di tipo int e b di tipo int il ritorno di tipo int
-    return a - b;               // ritorno il valore di "a - b"
-}
 
-int molt(int a, int b) {        // creo una funzione di nome "molt" con parametri a di tipo int e b di tipo int il ritorno di tipo int
-    return a * b;               // ritorno il valore di "a * b"
-}
+/* Funzione con ritorno stringa che al n valore di una variabile int prende un certo colore che ho chiamato in ogni cout */
 
-int divisione(int a, int b) {   // creo una funzione di nome "divisione" con parametri a di tipo int e b di tipo int il ritorno di tipo int
-    return a / b;               // ritorno il valore di "a / b"
-}
-
-int radice(int a) {             // creo una funzione di nome "radice" con parametro a di tipo int e il ritorno di tipo int
-    return sqrt(a);             // ritorno il valore di "sqrt(a)"
-}
-
-int potenza(int a, int b) {     // creo una funzione di nome "potenza" con parametro a di tipo int e b di tipo int il ritorno di tipo int
-    int i,x=a;                  // inizializzo le variabili
-    for (i=1;i<b;i++) {         // ciclo for
-        a = a * x;              // per ogni giro di ciclo moltiplico a per se stesso e per x, es. 9 = 9*3, 3^3
+std::string colore(int coloreSelezionato) {
+    switch (coloreSelezionato) {
+        case 1: // rosso
+            return "\e[0;31m";
+            break;
+        case 2: // giallo
+            return "\e[0;33m";
+            break;
+        case 3: // verde
+            return "\e[0;32m";
+            break;
+        case 4: // azzurro
+            return "\e[0;36m";
+            break;
+        case 5: // blu
+            return "\e[0;34m";
+            break;
+        case 6: // rosa
+            return "\e[0;35m";
+            break;
+        default: // default: rosso
+            return "\e[0;31m";
+            break;
     }
-    return a;                   // ritorno il valore di a
-}
-
-int media(int a, int b) {       // creo una funzione di nome "media" con parametro a di tipo int e b di tipo int il ritorno di tipo int
-    int i,totale=0;             // inizializzo le variabili
-    for (i=1;i<=a;i++) {        // ciclo for                                 
-        printf("Inserisci il numero %d -> ",i);   // output richiesta di b           
-        scanf("%d",&b);                           // input richiesta di b
-        totale += b;                              // totale = totale + b
-    }
-    return totale;                                // ritorno il valore di total                    
 }
 
 int main() {
-    int selezione;         // inizializzo la variabile INT "selezione"
-    int a,b,risultato=0;   // inizializzo alcune variabili
-    int menuzero = 1;
+    system("title Calcolatrice di Valentino Franco Catozzi");
+    int colorazione=1,selezionemenu=0,menu_uno=0,menu_due=0,menu_tre,menu_impostazioni=0;
+    float x,y,z,risultato;
+    int a,b;
+    std::string nomecolore = "casuale"; // variabile di tipo string che prende il nome del colore selezionato quando viene cambiato, se no è casuale di default
+    std::string convertito = "";
 
-    menu:
+    srand (time(NULL)); // cambia il seed della generazione in base al tempo
+    colorazione = rand() % 6 + 1; // numero casuale da 1 a 6
 
-    menuzero = 1;   // inizializzo il flag per tornare al menu
+    for (;;) { // loop for infinito
+        x = 0;
+        y = 0;
+        z = 0;
+        risultato = 0;
+        convertito = "";
 
-    system("CLS");      // pulisco la console
+        system("CLS"); // pulisco la console
 
-    /* <rosso>
-       ___   _   _    ___ ___  _      _ _____ ___ ___ ___ ___ 
-      / __| /_\ | |  / __/ _ \| |    /_\_   _| _ \_ _/ __| __|
-     | (__ / _ \| |_| (_| (_) | |__ / _ \| | |   /| | (__| _| 
-      \___/_/ \_\____\___\___/|____/_/ \_\_| |_|_\___\___|___|
+        /* Siccome una buon parte di classe ha fatto questo tipo di titolo ho deciso di colorarlo con colori a caso allo start o selezionabili per distinguerlo un po' dagli altri */
+        cout << colore(colorazione) << "   ___   _   _    ___ ___  _      _ _____ ___ ___ ___ ___ \n";
+        cout << "  / __| /_\\ | |  / __/ _ \\| |    /_\\_   _| _ \\_ _/ __| __|\n";
+        cout << " | (__ / _ \\| |_| (_| (_) | |__ / _ \\| | |   /| | (__| _| \n";                
+        cout << "  \\___/_/ \\_\\____\\___\\___/|____/_/ \\_\\_| |_|_\\___\\___|___|\n\n" << RESET << endl;
 
-       <reset>                                                   
-    */
+        cout << " Lista delle operazioni disponibili:\n" << endl;
+        cout << "  [" << colore(colorazione) << "0" << RESET << "] - Istruzioni\n";
+        cout << "  [" << colore(colorazione) << "1" << RESET << "] - Operazioni di base\n";
+        cout << "  [" << colore(colorazione) << "2" << RESET << "] - Calcolatrice scientifica\n";
+        cout << "  [" << colore(colorazione) << "3" << RESET << "] - Extra\n";
+        cout << "  [" << colore(colorazione) << "4" << RESET << "] - Impostazioni\n" << endl;
 
-    printf("\033[0;31m  ___   _   _    ___ ___  _      _ _____ ___ ___ ___ ___ \n");   // BANNER
-    printf(" / __| /_\\ | |  / __/ _ \\| |    /_\\_   _| _ \\_ _/ __| __|\n");         // BANNER
-    printf("| (__ / _ \\| |_| (_| (_) | |__ / _ \\| | |   /| | (__| _| \n");           // BANNER
-    printf(" \\___/_/ \\_\\____\\___\\___/|____/_/ \\_\\_| |_|_\\___\\___|___|\n");    // BANNER
-    printf("                                                         \033[0m\n");      // BANNER
+        cout << "  [" << colore(colorazione) << ">" << RESET << "] ";
+        cin >> selezionemenu;
 
-    printf("[1] - Addizione\n");            // opzione 1
-    printf("[2] - Sottrazione\n");          // opzione 2
-    printf("[3] - Moltiplicazione\n");      // opzione 3
-    printf("[4] - Divisione\n");            // opzione 4
-    printf("[5] - Radice quadrata\n");      // opzione 5
-    printf("[6] - Potenza\n");              // opzione 6
-    printf("[7] - Media\n");                // opzione 7
+        switch(selezionemenu) {
+            case 0: 
+                system("CLS"); 
+                cout << "PAGINA [" << colore(colorazione) << "1" << RESET << "/" << colore(colorazione) << "2" << RESET << "]\n";
+                cout << "\nBenvenuto nelle istruzioni della 'Calcolatrice di Valentino Franco Catozzi' v1\n" << endl;
+                cout << "Opzioni del PRIMO menu:" << endl;
+                cout << "\n[" << colore(colorazione) << "1" << RESET << "] - Operazioni di base (addizione,sottrazione,divisione e moltiplicazione)" << endl;
+                cout << "[" << colore(colorazione) << "2" << RESET << "] - Calcolatrice scientifica (cos,sin,tan,potenze,radici,log...)" << endl;
+                cout << "[" << colore(colorazione) << "3" << RESET << "] - Extra (conversione da base 10 a 2)" << endl;
+                cout << "[" << colore(colorazione) << "4" << RESET << "] - Impostazioni (Cambia il colore del tema della calcolatrice)\n" << endl;
+                cout << "Premi '" << colore(colorazione) << "Invio" << RESET << "' per continuare\n\n";
+                system("pause");
 
-    printf("\n\033[33mATTENZIONE:\033[0m tutti i valori sono numeri interi\n\n");
-              // ↑ codice di colore in escape ansi (giallo) - (reset)
-              //https://stackoverflow.com/questions/4053837/colorizing-text-in-the-console-with-c
 
-    printf("Seleziona che operazione vuoi fare -> "); // output richiesta selezione
-    scanf("%d",&selezione);                           // input della selezione
 
-    if (selezione == 1) {
+                system("CLS");
+                cout << "PAGINA [" << colore(colorazione) << "2" << RESET << "/" << colore(colorazione) << "2" << RESET << "]\n";
+                cout << "\nEsempio di operazione (Addizione)" << endl;
+                cout << "\nQuando si esegue un operazione (in base al tipo di operazione selezionata) il programma chiede 2 numeri (interi o non)" << endl;
+                cout << "della quale dovra' fare la somma (in questo caso)." << endl;
+                cout << "\nAd esempio:\n" << endl;
+                cout << "[" << colore(colorazione) << "ADDIZIONE" << RESET "]\n\n";
+                cout << "[" << colore(colorazione) << "INSERISCI IL PRIMO NUMERO" << RESET "] " << endl;
+                cout << "[" << colore(colorazione) << ">" << RESET "] " << "12";
+                cout << "\n[" << colore(colorazione) << "INSERISCI IL SECONDO NUMERO" << RESET "] " << endl;
+                cout << "[" << colore(colorazione) << ">" << RESET "] " << "12" << endl;
+                printf("\nLa somma di 12 e 12 e': 24\n");
+                cout << "\nPremi '" << colore(colorazione) << "Invio" << RESET << "' per continuare\n" << endl;
+                system("pause");
 
-        system("CLS");                                // pulisco la console
+                break;
+            case 1: 
+                system("CLS");
 
-        printf("[+] ADDIZIONE\n");                    // operazione selezionata
+                cout << colore(colorazione) << "   ___   _   _    ___ ___  _      _ _____ ___ ___ ___ ___ \n";
+                cout << "  / __| /_\\ | |  / __/ _ \\| |    /_\\_   _| _ \\_ _/ __| __|\n";
+                cout << " | (__ / _ \\| |_| (_| (_) | |__ / _ \\| | |   /| | (__| _| \n";                
+                cout << "  \\___/_/ \\_\\____\\___\\___/|____/_/ \\_\\_| |_|_\\___\\___|___|\n\n" << RESET << endl;
 
-        printf("\nInserisci il primo numero -> ");    // richiesta di a
-        scanf("%d",&a);                               // input richiesta di a
-        printf("Inserisci il secondo numero -> ");    // richiesta di b
-        scanf("%d",&b);                               // input richiesta di b
+                /* 
+                All'inizio nelle operazioni per fare l'output delle variabili usavo %2.f per limitare a 2 cifre decimali ma con cout se entrambe sono di 1/2 le tiene cosi quindi uso cout su quasi tutto
+                */
 
-        risultato = somma(a,b);
+                cout << " Lista delle (Operazioni di base) disponibili:\n" << endl;
+                cout << "  [" << colore(colorazione) << "0" << RESET << "] - Torna indietro.\n";
+                cout << "  [" << colore(colorazione) << "1" << RESET << "] - Addizione\n";
+                cout << "  [" << colore(colorazione) << "2" << RESET << "] - Sottrazione\n";
+                cout << "  [" << colore(colorazione) << "3" << RESET << "] - Moltiplicazione\n";
+                cout << "  [" << colore(colorazione) << "4" << RESET << "] - Divisione\n" << endl;
 
-        printf("\nIl risultato della (Addizione) tra %d e %d e': %d\n",a,b,risultato); // stampo il risultato e i valori
+                cout << "  [" << colore(colorazione) << ">" << RESET << "] ";
+                cin >> menu_uno;
+                
+                switch (menu_uno) {
+                    case 0:
+                        break;
+                    case 1: // ADDIZIONE
+                        system("CLS");
+                        cout << "[" << colore(colorazione) << "ADDIZIONE" << RESET "]\n\n"; 
+                        cout << "[" << colore(colorazione) << "INSERISCI IL PRIMO NUMERO" << RESET "] " << endl;
+                        cout << "[" << colore(colorazione) << ">" << RESET "] ";
+                        cin >> x;
+                        cout << "\n[" << colore(colorazione) << "INSERISCI IL SECONDO NUMERO" << RESET "] " << endl;
+                        cout << "[" << colore(colorazione) << ">" << RESET "] ";
+                        cin >> y;
+                        risultato = x + y;
+                        cout << "\nLa somma di " << colore(colorazione) << x << RESET << " e " << colore(colorazione) << y << RESET << " e': " << colore(colorazione) << risultato << RESET << endl;
+                        break;
+                    case 2: // SOTTRAZIONE
+                        system("CLS");
+                        cout << "[" << colore(colorazione) << "SOTTRAZIONE" << RESET "]\n\n"; 
+                        cout << "[" << colore(colorazione) << "INSERISCI IL PRIMO NUMERO" << RESET "] " << endl;
+                        cout << "[" << colore(colorazione) << ">" << RESET "] ";
+                        cin >> x;
+                        cout << "\n[" << colore(colorazione) << "INSERISCI IL SECONDO NUMERO" << RESET "] " << endl;
+                        cout << "[" << colore(colorazione) << ">" << RESET "] ";
+                        cin >> y;
+                        risultato = x - y;
+                        cout << "\nLa sottrazione di " << colore(colorazione) << x << RESET << " e " << colore(colorazione) << y << RESET << " e': " << colore(colorazione) << risultato << RESET << endl;
+                        break;
+                    case 3: // MOLTIPLICAZIONE
+                        system("CLS");
+                        cout << "[" << colore(colorazione) << "MOLTIPLICAZIONE" << RESET "]\n\n"; 
+                        cout << "[" << colore(colorazione) << "INSERISCI IL PRIMO NUMERO" << RESET "] " << endl;
+                        cout << "[" << colore(colorazione) << ">" << RESET "] ";
+                        cin >> x;
+                        cout << "\n[" << colore(colorazione) << "INSERISCI IL SECONDO NUMERO" << RESET "] " << endl;
+                        cout << "[" << colore(colorazione) << ">" << RESET "] ";
+                        cin >> y;
+                        risultato = x * y;
+                        cout << "\nLa moltiplicazione di " << colore(colorazione) << x << RESET << " e " << colore(colorazione) << y << RESET << " e': " << colore(colorazione) << risultato << RESET << endl;
+                        break;
+                    case 4: // DIVISIONE
+                        system("CLS");
+                        cout << "[" << colore(colorazione) << "DIVISIONE" << RESET "]\n\n"; 
+                        cout << "[" << colore(colorazione) << "INSERISCI IL PRIMO NUMERO" << RESET "] " << endl;
+                        cout << "[" << colore(colorazione) << ">" << RESET "] ";
+                        cin >> x;
+                        cout << "\n[" << colore(colorazione) << "INSERISCI IL SECONDO NUMERO" << RESET "] " << endl;
+                        cout << "[" << colore(colorazione) << ">" << RESET "] ";
+                        cin >> y;
+                        risultato = x / y;
+                        cout << "\nLa divisione di " << colore(colorazione) << x << RESET << " e " << colore(colorazione) << y << RESET << " e': " << colore(colorazione) << risultato << RESET << endl;
+                        break;
+                    default: // DEFAULT
+                        cout << colore(colorazione) << "\nOperazione selezionata non esistente!\n" << RESET; 
+                        break;
+                }
 
-    } else if (selezione == 2) {
+                if (menu_uno==0) {
+                    continue;
+                } else {
+                    printf("\n");
+                    system("pause");
+                }
 
-        system("CLS");                                // pulisco la console
+                break;
+            case 2: 
+                system("CLS");
 
-        printf("[+] SOTTRAZIONE\n");                  // operazione selezionata
+                cout << colore(colorazione) << "   ___   _   _    ___ ___  _      _ _____ ___ ___ ___ ___ \n";
+                cout << "  / __| /_\\ | |  / __/ _ \\| |    /_\\_   _| _ \\_ _/ __| __|\n";
+                cout << " | (__ / _ \\| |_| (_| (_) | |__ / _ \\| | |   /| | (__| _| \n";                
+                cout << "  \\___/_/ \\_\\____\\___\\___/|____/_/ \\_\\_| |_|_\\___\\___|___|\n\n" << RESET << endl;
 
-        printf("\nInserisci il primo numero -> ");    // richiesta di a
-        scanf("%d",&a);                               // input richiesta di a
-        printf("Inserisci il secondo numero -> ");    // richiesta di b
-        scanf("%d",&b);                               // input richiesta di b
+                cout << " Lista delle (Calcolatrice scientifica) disponibili:\n" << endl;
+                cout << "  [" << colore(colorazione) << "0" << RESET << "] - Torna indietro.\n";
+                cout << "  [" << colore(colorazione) << "1" << RESET << "] - Radice\n";
+                cout << "  [" << colore(colorazione) << "2" << RESET << "] - Potenza\n";
+                cout << "  [" << colore(colorazione) << "3" << RESET << "] - Logaritmo\n";
+                cout << "  [" << colore(colorazione) << "4" << RESET << "] - Sin\n";
+                cout << "  [" << colore(colorazione) << "5" << RESET << "] - Cos\n";
+                cout << "  [" << colore(colorazione) << "6" << RESET << "] - Tan\n";
+                cout << "  [" << colore(colorazione) << "7" << RESET << "] - Percento (%)\n";
+                cout << "  [" << colore(colorazione) << "8" << RESET << "] - Numero Casuale\n" << endl;
 
-        risultato = sottr(a,b);
+                cout << "  [" << colore(colorazione) << ">" << RESET << "] ";
+                cin >> menu_due;
+                
+                switch (menu_due) {
+                    case 0:
+                        break;
+                    case 1:
+                        system("CLS");
+                        cout << "[" << colore(colorazione) << "RADICE" << RESET "]\n\n"; 
+                        cout << "[" << colore(colorazione) << "INSERISCI IL NUMERO" << RESET "] " << endl;
+                        cout << "[" << colore(colorazione) << ">" << RESET "] ";
+                        cin >> x;
+                        cout << "\n[" << colore(colorazione) << "INSERISCI L'INDICE" << RESET "] " << endl;
+                        cout << "[" << colore(colorazione) << ">" << RESET "] ";
+                        cin >> y;
+                        risultato = pow(x, 1.0/y);
+                        cout << "\nLa radice di (" << colore(colorazione) << x << RESET << ") con indice (" << colore(colorazione) << y << RESET << ") e': " << colore(colorazione) << risultato << RESET << endl; 
+                        break;
+                    case 2:
+                        system("CLS");
+                        cout << "[" << colore(colorazione) << "POTENZA" << RESET "]\n\n"; 
+                        cout << "[" << colore(colorazione) << "INSERISCI IL NUMERO" << RESET "] " << endl;
+                        cout << "[" << colore(colorazione) << ">" << RESET "] ";
+                        cin >> x;
+                        cout << "\n[" << colore(colorazione) << "INSERISCI L'ESPONENTE" << RESET "] " << endl;
+                        cout << "[" << colore(colorazione) << ">" << RESET "] ";
+                        cin >> y;
+                        risultato = pow(x,y);
+                        cout << "\nLa potenza di (" << colore(colorazione) << x << RESET << ") con esponente (" << colore(colorazione) << y << RESET << ") e': " << colore(colorazione) << risultato << RESET << endl; 
+                        break;
+                    case 3:
+                        system("CLS");
+                        cout << "[" << colore(colorazione) << "LOGARITMO" << RESET "]\n\n"; 
+                        cout << "[" << colore(colorazione) << "INSERISCI IL NUMERO" << RESET "] " << endl;
+                        cout << "[" << colore(colorazione) << ">" << RESET "] ";
+                        cin >> x;
+                        cout << "\n[" << colore(colorazione) << "INSERISCI LA BASE" << RESET "] " << endl;
+                        cout << "[" << colore(colorazione) << ">" << RESET "] ";
+                        cin >> y;
+                        risultato = log(x)/log(y);
+                        cout << "\nIl logaritmo di (" << colore(colorazione) << x << RESET << ") con base (" << colore(colorazione) << y << RESET << ") e': " << colore(colorazione) << risultato << RESET << endl;
+                        break;
+                    case 4:
+                        system("CLS");
+                        cout << "[" << colore(colorazione) << "SIN" << RESET "]\n\n"; 
+                        cout << "[" << colore(colorazione) << "INSERISCI IL NUMERO" << RESET << " (in gradi)] " << endl;
+                        cout << "[" << colore(colorazione) << ">" << RESET "] ";
+                        cin >> x;
+                        risultato = sin(x*3.1415926535/180);
+                        cout << "\nIl (sin) di " << colore(colorazione) << x << RESET << " e': " << colore(colorazione) << risultato << RESET << endl;
+                        break;
+                    case 5:
+                        system("CLS");
+                        cout << "[" << colore(colorazione) << "COS" << RESET "]\n\n"; 
+                        cout << "[" << colore(colorazione) << "INSERISCI IL NUMERO" << RESET << " (in gradi)] " << endl;
+                        cout << "[" << colore(colorazione) << ">" << RESET "] ";
+                        cin >> x;
+                        risultato = cos(x*3.1415926535/180);
+                        cout << "\nIl (cos) di " << colore(colorazione) << x << RESET << " e': " << colore(colorazione) << risultato << RESET << endl;
+                        break;
+                    case 6:
+                        system("CLS");
+                        cout << "[" << colore(colorazione) << "TAN" << RESET "]\n\n"; 
+                        cout << "[" << colore(colorazione) << "INSERISCI IL NUMERO" << RESET << " (in gradi)] " << endl;
+                        cout << "[" << colore(colorazione) << ">" << RESET "] ";
+                        cin >> x;
+                        risultato = tan(x*3.1415926535/180);
+                        cout << "\nLa (tan) di " << colore(colorazione) << x << RESET << " e': " << colore(colorazione) << risultato << RESET << endl;
+                        break;
+                    case 7:
+                        system("CLS");
+                        cout << "[" << colore(colorazione) << "PERCENTUALE" << RESET "]\n\n"; 
+                        cout << "[" << colore(colorazione) << "INSERISCI IL NUMERO" << RESET "] " << endl;
+                        cout << "[" << colore(colorazione) << ">" << RESET "] ";
+                        cin >> x;
+                        cout << "\n[" << colore(colorazione) << "INSERISCI LA PERCENTUALE" << RESET "] " << endl;
+                        cout << "[" << colore(colorazione) << ">" << RESET "] ";
+                        cin >> y;
+                        risultato = (x*y)/100;
+                        cout << "\nIl " << colore(colorazione) << y << "%" << RESET << " di " << colore(colorazione) << x << RESET << " equivale a: " << colore(colorazione) << risultato << RESET << endl;
+                        break;
+                    case 8:
+                        system("CLS");
+                        cout << "[" << colore(colorazione) << "NUMERO CASUALE" << RESET "]\n"; 
+                        a = rand();
+                        cout << "\nIl numero generato casualmente e': " << colore(colorazione) << a << RESET << endl;
+                        break;
+                    default:
+                        cout << colore(colorazione) << "\nOperazione selezionata non esistente!\n" << RESET; 
+                        break;
+                }
 
-        printf("\nIl risultato della (Sottrazione) tra %d e %d e': %d\n",a,b,risultato); // stampo il risultato e i valori
+                if (menu_due==0) {
+                    continue;
+                } else {
+                    printf("\n");
+                    system("pause");
+                }
 
-    } else if (selezione == 3) {
+                break;
+            case 3: 
+                system("CLS");
 
-        system("CLS");                                // pulisco la console
+                cout << colore(colorazione) << "   ___   _   _    ___ ___  _      _ _____ ___ ___ ___ ___ \n";
+                cout << "  / __| /_\\ | |  / __/ _ \\| |    /_\\_   _| _ \\_ _/ __| __|\n";
+                cout << " | (__ / _ \\| |_| (_| (_) | |__ / _ \\| | |   /| | (__| _| \n";                
+                cout << "  \\___/_/ \\_\\____\\___\\___/|____/_/ \\_\\_| |_|_\\___\\___|___|\n\n" << RESET << endl;
 
-        printf("[+] MOLTIPLICAZIONE\n");              // operazione selezionata
+                cout << " Lista delle operazioni (Extra) disponibili:\n" << endl;
+                cout << "  [" << colore(colorazione) << "0" << RESET << "] - Torna indietro.\n";
+                cout << "  [" << colore(colorazione) << "1" << RESET << "] - Conversione base 10-2\n" << endl;
 
-        printf("\nInserisci il primo numero -> ");    // richiesta di a
-        scanf("%d",&a);                               // input richiesta di a
-        printf("Inserisci il secondo numero -> ");    // richiesta di b
-        scanf("%d",&b);                               // input richiesta di b
+                cout << "  [" << colore(colorazione) << ">" << RESET << "] ";
+                cin >> menu_tre;
+                
+                switch (menu_tre) {
+                    case 0:
+                        break;
+                    case 1:
+                        system("CLS");
+                        cout << "[" << colore(colorazione) << "CONVERSIONE DA BASE 10 A BASE 2" << RESET "]\n\n"; 
+                        cout << "[" << colore(colorazione) << "INSERISCI IL NUMERO" << RESET << "] " << endl;
+                        cout << "[" << colore(colorazione) << ">" << RESET "] ";
+                        cin >> a;
+                        b=a;
+	                    while (a>0) {
+		                    if (a%2==0) {
+                                convertito='0'+convertito;
+                            } else {
+			                    convertito='1'+convertito;
+                            }
+		                    a=a/2;
+	                    }
+                        cout << "\nIl numero " << colore(colorazione) << b << RESET << " in base 2 equivale a: " << colore(colorazione) << convertito << RESET << endl;
+                        break;
+                    default:
+                        cout << colore(colorazione) << "\nOperazione selezionata non esistente!\n" << RESET; 
+                        break;
+                }
 
-        risultato = molt(a,b);
+                if (menu_tre==0) {
+                    continue;
+                } else {
+                    printf("\n");
+                    system("pause");
+                }
 
-        printf("\nIl risultato della (Moltiplicazione) tra %d e %d e': %d\n",a,b,risultato); // stampo il risultato e i valori
+                break;
+            case 4: 
+                system("CLS");
 
-    } else if (selezione == 4) {
+                cout << colore(colorazione) << "   ___   _   _    ___ ___  _      _ _____ ___ ___ ___ ___ \n";
+                cout << "  / __| /_\\ | |  / __/ _ \\| |    /_\\_   _| _ \\_ _/ __| __|\n";
+                cout << " | (__ / _ \\| |_| (_| (_) | |__ / _ \\| | |   /| | (__| _| \n";                
+                cout << "  \\___/_/ \\_\\____\\___\\___/|____/_/ \\_\\_| |_|_\\___\\___|___|\n\n" << RESET << endl;
 
-        system("CLS");                                // pulisco la console
+                cout << " Lista delle (Impostazioni) disponibili:\n" << endl;
+                cout << "  [" << colore(colorazione) << "0" << RESET << "] - Torna indietro.\n";
+                cout << "  [" << colore(colorazione) << "1" << RESET << "] - Cambia il colore\n" << endl;
 
-        printf("[+] DIVISIONE\n");                    // operazione selezionata
+                cout << "  [" << colore(colorazione) << ">" << RESET << "] ";
+                cin >> menu_impostazioni;
+                
+                switch (menu_impostazioni) {
+                    case 0:
+                        break;
+                    case 1:
+                        system("CLS");
+                        cout << "[" << colore(colorazione) << "COLORI" << RESET << "]\n" << endl;
+                        cout << "[" << colore(colorazione) << "1" << RESET << "] - Rosso (\e[0;31mRosso" << RESET << ")\n";
+                        cout << "[" << colore(colorazione) << "2" << RESET << "] - Giallo (\e[0;33mGiallo" << RESET << ")\n";
+                        cout << "[" << colore(colorazione) << "3" << RESET << "] - Verde (\e[0;32mVerde" << RESET << ")\n";
+                        cout << "[" << colore(colorazione) << "4" << RESET << "] - Azzurro (\e[0;36mAzzurro" << RESET << ")\n";
+                        cout << "[" << colore(colorazione) << "5" << RESET << "] - Blu (\e[0;34mBlu" << RESET << ")\n";
+                        cout << "[" << colore(colorazione) << "6" << RESET << "] - Magenta (\e[0;35mMagenta" << RESET ")\n" << endl;
 
-        printf("\nInserisci il primo numero -> ");    // richiesta di a
-        scanf("%d",&a);                               // input richiesta di a
-        printf("Inserisci il secondo numero -> ");    // richiesta di b
-        scanf("%d",&b);                               // input richiesta di b
+                        cout << "[" << colore(colorazione) << "CAMBIA IL COLORE" << RESET "]\n\n"; 
+                        cout << "[" << colore(colorazione) << "INSERISCI IL COLORE" << colore(colorazione) << RESET << "]" << endl;
+                        cout << "[" << colore(colorazione) << ">" << RESET "] ";
+                        cin >> colorazione;
 
-        risultato = divisione(a,b);
+                        if (colorazione == 1) {
+                            nomecolore = "Rosso";
+                        } else if (colorazione == 2) {
+                            nomecolore = "Giallo";
+                        } else if (colorazione == 3) {
+                            nomecolore = "Verde";
+                        } else if (colorazione == 4) {
+                            nomecolore = "Azzurro";
+                        } else if (colorazione == 5) {
+                            nomecolore = "Blu";
+                        } else if (colorazione == 6) {
+                            nomecolore = "Magenta";
+                        } else {
+                            cout << colore(colorazione) << "\nColorazione selezionata non esistente! (Ho selezionato per te il rosso!)" << RESET << endl; 
+                            nomecolore = "Rosso";
+                        }
+                        
+                        cout << endl << "Colore cambiato con successo! colore selezionato: " << colore(colorazione) << nomecolore << endl;
+                        break;
+                    case 2:
+                        system("CLS");
+                        break;
+                    default:
+                        cout << colore(colorazione) << "\nOperazione selezionata non esistente!\n" << RESET; 
+                        break;
+                }
 
-        printf("\nIl risultato della (Divisione) tra %d e %d e': %d\n",a,b,risultato); // stampo il risultato e i valori
+                if (menu_impostazioni==0) {
+                    continue;
+                } else {
+                    printf("\n");
+                    system("pause");
+                }
 
-    } else if (selezione == 5) {
-
-        system("CLS");                                // pulisco la console
-
-        printf("[+] RADICE QUADRATA\n");              // operazione selezionata
-
-        printf("\nInserisci il numero -> ");          // richiesta di a
-        scanf("%d",&a);                               // input richiesta di a
-
-        risultato = radice(a);                        // utilizzo la funzione radice() per dare valore alla variabile "risultato", torna un valore di sqrt(a)
-
-        printf("\nIl risultato della (Radice quadrata) di %d e': %d\n",a,risultato); // stampo il risultato e i valori
-        
-    } else if (selezione == 6) {
-
-        system("CLS");                                // pulisco la console
-
-        printf("[+] POTENZA\n");                      // operazione selezionata
-
-        printf("\nInserisci il numero -> ");          // richiesta di a
-        scanf("%d",&a);                               // input richiesta di a
-        printf("Inserisci l'esponente -> ");          // richiesta di b
-        scanf("%d",&b);                               // input richiesta di b
-
-        risultato = potenza(a,b);                     // utilizzo la funzione potenza() per dare valore alla variabile "risultato"
-
-        printf("\nIl risultato della (Potenza) di %d elevato a %d e': %d\n",a,b,risultato); // stampo il risultato e i valori
-
-    } else if (selezione == 7) {
-
-        system("CLS");                                                 // pulisco la console
-
-        printf("[+] MEDIA\n");                                         // operazione selezionata
-
-        printf("\nDi quanti numeri vuoi fare la media? -> ");          // richiesta di a
-        scanf("%d",&a);                                                // input di a
-
-        risultato = media(a,b);                                        // utilizzando la funzione media calcolo la somma
-        risultato /= a;                                                // divido la somma dei numeri per quanti numeri ci sono e trovo la media
-
-        printf("\nla media e': %d\n",risultato);                       // stampo il risultato
-
-    } else {
-
-        goto menu; // se selezione è diversa dai tipi di selezione disponibili torno al menu
-
-    }
-
-    printf("\nScrivi '0' per tornare al menu -> ");         // ritorno al menu
-    scanf("%d",&menuzero);                                  // input del ritorno al menu
-
-    if (menuzero == 0) {                                    // se menuzero è = 0 torno indietro
-        goto menu;                                          // torno al menu
-    } else {                                                // altrimenti
-        while (menuzero != 0) {                             // finche menu è diverso da 0
-            printf("Scrivi '0' per tornare al menu -> ");   // ridico di scrivere 0
-            scanf("%d",&menuzero);                          // chiedo l'input di menuzero
+                break;
+            default:
+                cout << colore(colorazione) << "\nOperazione selezionata non esistente!\n\n" << RESET; 
+                system("pause");
+                break;
         }
-        goto menu;                                          // esce dal loop quindi menuzero = 0 e posso tornare al menu
     }
-    
 }
