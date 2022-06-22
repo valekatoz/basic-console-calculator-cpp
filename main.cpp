@@ -37,7 +37,7 @@ std::string colore(int coloreSelezionato) {
 }
 
 int main() {
-    system("title Calcolatrice di Valentino Franco Catozzi");
+    system("title Calcolatrice");
     int colorazione=1,selezionemenu=0,menu_uno=0,menu_due=0,menu_tre,menu_impostazioni=0;
     float x,y,z,risultato;
     int a,b;
@@ -76,7 +76,7 @@ int main() {
             case 0: 
                 system("CLS"); 
                 cout << "PAGINA [" << colore(colorazione) << "1" << RESET << "/" << colore(colorazione) << "2" << RESET << "]\n";
-                cout << "\nBenvenuto nelle istruzioni della 'Calcolatrice di Valentino Franco Catozzi' v1\n" << endl;
+                cout << "\nBenvenuto nelle istruzioni della Calcolatrice (v1)\n" << endl;
                 cout << "Opzioni del PRIMO menu:" << endl;
                 cout << "\n[" << colore(colorazione) << "1" << RESET << "] - Operazioni di base (addizione,sottrazione,divisione e moltiplicazione)" << endl;
                 cout << "[" << colore(colorazione) << "2" << RESET << "] - Calcolatrice scientifica (cos,sin,tan,potenze,radici,log...)" << endl;
